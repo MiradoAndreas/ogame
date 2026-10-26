@@ -5,7 +5,7 @@ import { auth as triggerAuth } from "@trigger.dev/sdk"
 import { chat, type ChatStartSessionParams } from "@trigger.dev/sdk/ai"
 
 import { getGame } from "@/lib/games/queries"
-import type { gameChat } from "@/trigger/chat"
+import type { gameChat } from "@/src/trigger/chat"
 
 const startSession = chat.createStartSessionAction<typeof gameChat>("game-chat")
 

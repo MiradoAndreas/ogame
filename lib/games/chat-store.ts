@@ -15,13 +15,24 @@ import { db, games } from "@/lib/db/client"
  * `@/lib/games/chat-actions` already authorized against the caller's org.
  */
 export async function loadGameMessages(gameId: string): Promise<UIMessage[]> {
-  const [game] = await db
-    .select({ messages: games.messages })
-    .from(games)
-    .where(eq(games.id, gameId))
-    .limit(1)
+  try {
+    console.log("Loadede Game messages functions call here ...")
+    const [game] = await db
+      .select({ messages: games.messages })
+      .from(games)
+      .where(eq(games.id, gameId))
+      .limit(1)
 
-  return game?.messages ?? []
+    console.log("Game found with game.messages : ", game.messages)
+
+    return game?.messages ?? []
+
+  } catch (error) {
+    console.log("Loaded game cause an error ")
+    console.error("[chat-store] load failed:", error)
+    console.error("[chat-store] cause:", (error as Error).cause)
+    throw error
+  }
 }
 
 /**
@@ -37,7 +48,9 @@ export async function saveGameMessages({
   gameId: string
   messages: UIMessage[]
 }): Promise<void> {
+  console.log("SAVING GAME MESSAGES....")
   await db.update(games).set({ messages }).where(eq(games.id, gameId))
+  console.log("UPDATE SUCCESSFULY")
 }
 
 /**
@@ -58,8 +71,13 @@ export async function saveGameTurn({
   chatAccessToken: string
   chatLastEventId: string | undefined
 }): Promise<void> {
-  await db
-    .update(games)
-    .set({ messages, chatAccessToken, chatLastEventId })
-    .where(eq(games.id, gameId))
+  try {
+    await db
+      .update(games)
+      .set({ messages, chatAccessToken, chatLastEventId })
+      .where(eq(games.id, gameId))
+  }
+  catch (error) {
+    console.log("ERROR saveGameTurn : ", error)
+  }
 }

@@ -2,7 +2,7 @@ import { additionalFiles } from "@trigger.dev/build/extensions/core";
 import { defineConfig } from "@trigger.dev/sdk";
 
 export default defineConfig({
-  project: "proj_mrgzxrrrlsqxhkxnkflz",
+  project: "proj_etppbtgspawxfmiamxwe",
   runtime: "node-24",
   logLevel: "log",
   // The max compute seconds a task is allowed to run. If the task run exceeds this duration, it will be stopped.
@@ -19,7 +19,7 @@ export default defineConfig({
       randomize: true,
     },
   },
-  dirs: ["trigger"],
+  dirs: ["./src/trigger"],
   build: {
     // Nothing imports the sandbox seed files — they are read off disk at
     // runtime by `@/lib/games/seed` — so the bundler never sees them and they

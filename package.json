@@ -12,8 +12,8 @@
     "db:push": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=3000' drizzle-kit push",
     "db:studio": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=3000' drizzle-kit studio",
     "dev": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=3000' next dev",
-    "trigger:dev": "trigger dev",
-    "trigger:deploy": "trigger deploy"
+    "trigger:dev": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=5000' trigger dev",
+    "trigger:deploy": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=5000' trigger deploy"
   },
   "dependencies": {
     "@ai-sdk/openai": "^4.0.102",
@@ -25,8 +25,8 @@
     "@neon/config": "^1.0.5",
     "@neon/env": "^1.1.5",
     "@shadcn/react": "^0.3.0",
-    "ai": "^7.0.153",
     "@trigger.dev/sdk": "^4.5.14",
+    "ai": "^7.0.153",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",

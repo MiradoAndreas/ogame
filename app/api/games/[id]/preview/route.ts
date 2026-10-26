@@ -34,7 +34,7 @@ export async function GET(
   // Null until the thread's first turn creates the sandbox, and for games made
   // before sandboxes existed. Neither has anything to preview yet.
   if (!game.sandboxId) {
-    return Response.json({ error: "Game has no sandbox yet" }, { status: 409 })
+    return Response.json({ error: "Game has no sandbox yet, you can try to refresh the page" }, { status: 409 })
   }
 
   const { sandbox } = await startGameServer(game.sandboxId)

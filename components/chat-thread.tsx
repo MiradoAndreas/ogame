@@ -47,7 +47,7 @@ import {
 } from "@/lib/games/chat-actions"
 import { cn } from "@/lib/utils"
 // Type-only: the agent module reaches the server bundle, never the browser.
-import type { gameChat } from "@/trigger/chat"
+import type { gameChat } from "@/src/trigger/chat"
 
 /** The tool the agent asks with, rather than one it edits the game with. */
 const ASK_PLAYER = "ask_player"
