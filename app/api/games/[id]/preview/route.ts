@@ -56,9 +56,6 @@ export async function GET(
   // Null until the thread's first turn creates the sandbox, and for games made
   // before sandboxes existed. Neither has anything to preview yet.
   if (!game.sandboxId) {
-<<<<<<< HEAD
-    return Response.json({ error: "Game has no sandbox yet, you can try to refresh the page" }, { status: 409 })
-=======
     // Expected on a brand-new game, so not a warning — but a game still
     // answering 409 well after its first turn finished means `onChatStart`
     // never ran, and this is what shows that.
@@ -68,8 +65,7 @@ export async function GET(
       { "game.id": id, "http.response.status_code": 409 }
     )
 
-    return Response.json({ error: "Game has no sandbox yet" }, { status: 409 })
->>>>>>> origin/chapter-10-observability
+    return Response.json({ error: "Game has no sandbox yet try to refresh this page" }, { status: 409 })
   }
 
   // A throw from here is a 500, which `onRequestError` in `@/instrumentation`
