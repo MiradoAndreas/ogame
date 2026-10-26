@@ -1,6 +1,6 @@
 "use server"
 
-import { anthropic } from "@ai-sdk/anthropic"
+import { openai } from "@ai-sdk/openai"
 import { auth } from "@clerk/nextjs/server"
 import { generateText } from "ai"
 import { refresh } from "next/cache"
@@ -28,7 +28,7 @@ function truncate(title: string) {
 async function generateTitle(prompt: string) {
   try {
     const { text } = await generateText({
-      model: anthropic("claude-haiku-4-5"),
+      model: openai("gpt-4.1-nano"),
       instructions:
         "You name games from the prompt that created them. Reply with a title " +
         "of at most four words in title case. No quotes, no punctuation at the " +
