@@ -59,14 +59,17 @@ export const gameChat = chat.agent({
     // Appends a genuinely new user message and no-ops otherwise. A new game is
     // created with its opening prompt already stored, and the client replays
     // that same message to ask for the first reply — this dedupes it by id.
+    //
+    // Nothing is written here, deliberately. The turn that answers an
+    // `ask_player` question arrives as a state advance on a message this row
+    // already holds, which is exactly the case this no-ops on, and the runtime
+    // only overlays that advance onto the chain *after* this hook returns — so
+    // a write from here could never carry the answer. `onTurnStart` persists
+    // the merged chain instead, which covers both cases in one statement.
     const appended = upsertIncomingMessage(stored, {
       trigger,
       incomingMessages,
     })
-
-    if (appended) {
-      await saveGameMessages({ gameId: chatId, messages: stored })
-    }
 
     // The top of every turn, and the one place the thread's size is visible.
     // Message *counts*, never message content: the thread is the player's
@@ -104,15 +107,29 @@ export const gameChat = chat.agent({
       throw error
     }
   },
-  // Every turn, including the first turn of a continuation run — which is
-  // where `onChatStart` would have missed it. The session-start check in
-  // `@/lib/games/chat-actions` is the other half: this one catches the thread
-  // that was affordable when it opened and is not any more.
-  //
-  // Deliberately *not* per step. A turn that has started is paid for to the
-  // end, overdraft and all, because a game abandoned mid-write has cost the
-  // same and left nothing to show for it.
-  onTurnStart: async ({ chatId }) => {
+  // Every turn, and the last point before it starts streaming: the thread is
+  // written down here, and then the turn is either paid for or refused.
+  onTurnStart: async ({ chatId, uiMessages }) => {
+    // The thread as the runtime has it, which on the turn that answers an
+    // `ask_player` question is the only place the player's answer exists yet:
+    // the browser ships it as a state advance on a message this row already
+    // holds, and the runtime overlays it between `hydrateMessages` and here.
+    //
+    // Written before the turn rather than after it, because the turn it opens
+    // is a build that runs for minutes — and until this lands, a reload reads
+    // the row back and puts the same question to the player a second time. A
+    // turn that is refused below, or that dies part way, never reaches
+    // `onTurnComplete` and would otherwise leave the answer nowhere.
+    await saveGameMessages({ gameId: chatId, messages: uiMessages })
+
+    // Checked on every turn, including the first turn of a continuation run —
+    // which is where `onChatStart` would have missed it. The session-start
+    // check in `@/lib/games/chat-actions` is the other half: this one catches
+    // the thread that was affordable when it opened and is not any more.
+    //
+    // Deliberately *not* per step. A turn that has started is paid for to the
+    // end, overdraft and all, because a game abandoned mid-write has cost the
+    // same and left nothing to show for it.
     const orgId = await loadGameOrgId(chatId)
 
     // No row, no owner to bill and nothing to check against. The turn will
@@ -196,6 +213,26 @@ export const gameChat = chat.agent({
     // with it. Named here rather than inline because the same choice decides
     // what the turn runs on and what it is billed at.
     const modelId = clientData?.modelId ?? DEFAULT_GAME_MODEL_ID
+
+    // A turn with nothing to answer. The history ends on the agent's own reply,
+    // which means whatever opened this turn added no message to it — a thread
+    // submitted twice, or a tab asking for a reply it has already been given.
+    // A trailing assistant message is read as a prefill for the model to carry
+    // on from, and these models refuse one outright, so the turn would die at
+    // the provider rather than quietly do nothing. Returning no stream ends it
+    // here instead: nothing generated, nothing charged, nothing added to the
+    // thread.
+    if (messages.at(-1)?.role === "assistant") {
+      logger.warn(
+        logger.fmt`Skipped a turn with nothing to answer for game ${chatId}`,
+        {
+          "game.id": chatId,
+          "chat.messages": messages.length,
+        }
+      )
+
+      return
+    }
 
     // Resolved once for the turn rather than per step: the owner of a game
     // cannot change mid-turn, and a lookup inside `onStepEnd` would repeat it
