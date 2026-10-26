@@ -1,4 +1,4 @@
-import { anthropic } from "@ai-sdk/anthropic"
+import { openai } from "@ai-sdk/openai"
 import type { LanguageModel } from "ai"
 
 import type { GameModelId } from "./model-catalog"
@@ -6,7 +6,7 @@ import type { GameModelId } from "./model-catalog"
 /**
  * The provider instance behind each catalog entry.
  *
- * Server-side only — constructing these reaches for `ANTHROPIC_API_KEY`, and
+ * Server-side only — constructing these reaches for `OPENAI_API_KEY`, and
  * the provider SDK has no business in a browser bundle. There is no
  * `server-only` marker enforcing that, though, for the same reason `@/lib/db`
  * keeps its marker in a separate entry: the chat agent imports this module and
@@ -18,7 +18,7 @@ import type { GameModelId } from "./model-catalog"
  * error, not an undefined model discovered at the top of someone's turn.
  */
 export const gameModels = {
-  "claude-opus-5": anthropic("claude-opus-5"),
-  "claude-sonnet-5": anthropic("claude-sonnet-5"),
-  "claude-haiku-4-5": anthropic("claude-haiku-4-5"),
+  "gpt-6-astra": openai("gpt-6-astra"),
+  "gpt-6.1-sol": openai("gpt-6.1-sol"),
+  "gpt-6-luna": openai("gpt-6-luna"),
 } satisfies Record<GameModelId, LanguageModel>
