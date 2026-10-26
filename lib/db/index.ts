@@ -11,6 +11,8 @@ import * as schema from "./schema"
 // Pooled connection (PgBouncer) — the right one for request traffic.
 const { postgres } = parseEnv(neonConfig, ["DATABASE_URL"])
 
+console.log("postgres.databaseUrl = ", postgres.databaseUrl)
+
 // Reuse the pool across hot reloads in dev so we don't exhaust connections.
 const globalForDb = globalThis as unknown as { pool?: Pool }
 

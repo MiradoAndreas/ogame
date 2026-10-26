@@ -4,14 +4,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
-    "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:push": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=3000' drizzle-kit push",
+    "db:studio": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=3000' drizzle-kit studio",
+    "dev": "NODE_OPTIONS='--network-family-autoselection-attempt-timeout=3000' next dev"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
