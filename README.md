@@ -217,6 +217,4 @@ trigger.config.ts               # Trigger.dev build and deploy configuration
 
 Contributions are welcome. Open an issue to discuss a change, then submit a pull request. Please run `npm run lint` and `npm run typecheck` before pushing.
 
-## License
 
-Add your license here (for example MIT) and include a `LICENSE` file at the root of the repository.
